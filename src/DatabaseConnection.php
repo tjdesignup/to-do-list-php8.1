@@ -5,6 +5,7 @@ namespace App;
 class DatabaseConnection{
     private string $dbHost;
     private string $dbName;
+    private string $dbPort;
     private string $username;
     private string $password;
     public \PDO $db;
@@ -13,17 +14,25 @@ class DatabaseConnection{
     {
         
         $this->loadEnv($envFilePath);
-        $this->dbHost = getenv('DB_HOST');
-        $this->dbName = getenv('DB_NAME');
-        $this->username = getenv('DB_USER');
-        $this->password = getenv('DB_PASS');
-        
+        if(DEBUG===true){
+            $this->dbHost = getenv('DB_DEBUG_HOST');
+            $this->dbName = getenv('DB_DEBUG_NAME');
+            $this->dbPort = getenv('DB_DEBUG_PORT');
+            $this->username = getenv('DB_DEBUG_USER');
+            $this->password = getenv('DB_DEBUG_PASS');            
+        }else{
+            $this->dbHost = getenv('DB_SERVER_HOST');
+            $this->dbName = getenv('DB_SERVER_NAME');
+            $this->dbPort = getenv('DB_SERVER_PORT');
+            $this->username = getenv('DB_SERVER_USER');
+            $this->password = getenv('DB_SERVER_PASS');
+        }
     }
     
     public function connect():void
     {
         try{
-        $pdo = new \PDO("mysql:host=$this->dbHost;dbname=$this->dbName;charset=utf8mb4",$this->username,$this->password);
+        $pdo = new \PDO("mysql:host=$this->dbHost;port=$this->dbPort;dbname=$this->dbName;charset=utf8mb4",$this->username,$this->password);
         $pdo->setAttribute(\PDO::ATTR_ERRMODE, \PDO::ERRMODE_EXCEPTION);
         $pdo->setAttribute(\PDO::ATTR_DEFAULT_FETCH_MODE, \PDO::FETCH_ASSOC);
         $this->db = $pdo;
