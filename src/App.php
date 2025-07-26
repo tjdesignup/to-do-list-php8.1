@@ -3,7 +3,6 @@ namespace App;
 
 class App {
 
-    private ?Container $container;
     private Router $router;
 
     public function run():void
